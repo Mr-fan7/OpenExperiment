@@ -1,13 +1,10 @@
 package com.swpu.uchain.openexperiment.service;
 
 import com.swpu.uchain.openexperiment.domain.ProjectFile;
-import com.swpu.uchain.openexperiment.form.file.UploadFileForm;
 import com.swpu.uchain.openexperiment.result.Result;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * @Description
@@ -41,13 +38,6 @@ public interface ProjectFileService {
      */
     boolean delete(Long id);
 
-    /**
-    * 判断文件是否存在
-    * @param projectGroupId
-    * @return:
-    */
-
-    List<String> getFileName(Long projectGroupId);
 
     /**
      * 上传文件
@@ -65,11 +55,5 @@ public interface ProjectFileService {
     */
     Result downloadFile(String fileName,  HttpServletResponse response);
 
-    /**
-    * 查找具有groupId的文件名列表
-    * @param projectGroupId
-    * @return:
-    */
-    List<Long> getFileIdListByGroupId(Long projectGroupId);
 
 }
