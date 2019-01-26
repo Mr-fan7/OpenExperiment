@@ -4,15 +4,12 @@ import com.swpu.uchain.openexperiment.dao.ProjectFileMapper;
 import com.swpu.uchain.openexperiment.domain.ProjectFile;
 import com.swpu.uchain.openexperiment.domain.User;
 import com.swpu.uchain.openexperiment.enums.CodeMsg;
-import com.swpu.uchain.openexperiment.form.file.UploadFileForm;
-import com.swpu.uchain.openexperiment.redis.key.ProjectFileKey;
 import com.swpu.uchain.openexperiment.redis.RedisService;
 import com.swpu.uchain.openexperiment.result.Result;
 import com.swpu.uchain.openexperiment.service.ProjectFileService;
-import com.swpu.uchain.openexperiment.service.ProjectService;
 import com.swpu.uchain.openexperiment.service.UserService;
+import com.swpu.uchain.openexperiment.util.FileSizeUtil;
 import com.swpu.uchain.openexperiment.util.FileTypeUtil;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,17 +68,6 @@ public class ProjectFileServiceImpl implements ProjectFileService {
 
 
     @Override
-    public List<String> getFileName(Long projectGroupId) {
-        List<ProjectFile> projectFiles = projectFileMapper.getFileNameById(projectGroupId);
-        List<String> fileNames = new ArrayList<>();
-        for (ProjectFile projectFile : projectFiles) {
-            fileNames.add(projectFile.getFileName());
-        }
-        return fileNames;
-    }
-
-
-    @Override
     public Result uploadFile(MultipartFile file, Long projectGroupId) {
         ProjectFile mark = projectFileMapper.selectByGroupIdAndKeyWord(projectGroupId, fileName);
         if (mark != null) {
@@ -107,7 +93,9 @@ public class ProjectFileServiceImpl implements ProjectFileService {
         if (file.getSize() > (1024 * 10000)) {
             return Result.error(CodeMsg.FILE_OVERSIZE);
         }
-        String size = "" + file.getSize();
+        
+        FileSizeUtil fileSizeUtil = new FileSizeUtil();
+        String size = fileSizeUtil.sizeConversionMB(file.getSize());
         User user = userService.getCurrentUser();
         projectFile.setFileType(type);
         projectFile.setFileName(originalFilename);
@@ -182,9 +170,5 @@ public class ProjectFileServiceImpl implements ProjectFileService {
         }
         return Result.error(CodeMsg.DOWNLOAD_ERROR);
     }
-
-    @Override
-    public List<Long> getFileIdListByGroupId(Long projectGroupId) {
-        return projectFileMapper.selectFileIdByProjectGroupId(projectGroupId);
-    }
 }
+
